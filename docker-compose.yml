@@ -1,0 +1,21 @@
+version: "3"
+services:
+  web:
+    build:
+      context: . # specify where the root of the project is
+      dockerfile: Dockerfile.dev # look at the current working directory, find the file name Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules # do not try to map node_modules folder inside the container
+      - .:/app # map current working directory to the /app folder in the container
+  tests:
+    # note that for the tests we don't need any ports
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    # override the starting command
+    command: ["npm", "run", "test"]
