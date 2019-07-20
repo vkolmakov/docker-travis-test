@@ -14,6 +14,11 @@ FROM nginx
 # notice no AS or any other special syntax - the last FROM is used as the run
 # phase
 
+# This instruction is required for AWS Elastic Beanstalk - we won't get anything
+# from this instruction, but when we deploy our app to AWS, it will look into
+# the Dockerfile for the ports that are supposed to be exposed.
+EXPOSE 80
+
 # note that we specify what phase to copy from
 # and that we copy into the directory where nginx
 # expects the static files to be (refer to nginx
