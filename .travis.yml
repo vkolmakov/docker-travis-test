@@ -18,3 +18,34 @@ before_install:
 # will tell us that the build is broken.
 script:
   - docker run -e CI=true vkolmakov/docker-travis-test npm run test -- --coverage
+
+# will tell Travis how to deploy the application to AWS
+deploy:
+  # TravisCI comes with several pre-configured providers
+  provider: elasticbeanstalk
+  # For Elastic Beanstalk the region can be obtained from the URL.
+  # e.g., <appname>.us-west-2.elasticbeanstalk.com
+  region: "us-west-2"
+  # Name of the application on AWS
+  app: "docker-travis-test"
+  # Name of the environment on AWS
+  env: "DockerTravisTest-env"
+  # Travis will zip all of the files up and copy them to an S3 bucket.
+  # This bucket is already automatically generated when the environment was
+  #   created and can be found under S3 resources.
+  bucket_name: "elasticbeanstalk-us-west-2-607800667913"
+  # The same bucket will be reused for multiple environments on the same
+  # region. By default, the path for the application is the same as the
+  # `app` name specified on AWS.
+  bucket_path: "docker-travis-test"
+  on:
+    # we don't want to deploy from feature branches, this will restrict
+    # the deploy step to merges to `master` branch only.
+    branch: master
+  # Authentication - to get the values, create a user in the IAM console
+  #   with all elasticbeanstalk permissions.
+  # To store the values, go to TravisCI configuration UI and add them as
+  # environment variables.
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
