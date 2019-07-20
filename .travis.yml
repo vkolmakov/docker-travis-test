@@ -1,0 +1,20 @@
+# must include superuser permissions
+sudo: require
+
+services:
+  # we need a copy of Docker ready
+  - docker
+
+# list series of commands to run before we start running our tests
+# or deploying
+before_install:
+  # we must tag the image to be able to refer to it later in the process.
+  # we will be using the dev Dockerfile because the tests are not included in the
+  #   production image.
+  - docker build -t vkolmakov/docker-travis-test -f Dockerfile.dev .
+
+# contains all of the commands required to be executed
+# if any of the commands listed here fail, Travis
+# will tell us that the build is broken.
+script:
+  - docker run -e CI=true vkolmakov/docker-travis-test npm run test -- --coverage
